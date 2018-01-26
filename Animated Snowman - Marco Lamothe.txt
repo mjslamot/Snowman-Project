@@ -1,0 +1,303 @@
+import java.applet.Applet;
+import java.awt.*;
+
+public class AnimatedSnowman extends Applet implements Runnable
+{
+	Thread runner;
+	int horizontalPos = 300, verticlePos = 0, songNumber = 0;
+	String[] songInfo = new String[5];	
+	int[] xHorizon = new int[1002];
+	int[] yHorizon = new int[1002];
+	int[] xpoints2 = new int[1000];
+	int[] ypoints2 = new int[1000];
+	int finalIterations;
+	int[] snowXPositions = new int[40];
+	int[] snowYPositions = new int[40];
+	int armPosition = 0;
+
+	public void start()
+	{	
+   	 	if(runner == null)
+   		{
+       			runner = new Thread(this);
+       			runner.start();
+   		}
+	}
+
+
+	public void init()
+	{
+			//Pre-Setup: Horizon
+		xHorizon [0] = 0;
+		yHorizon[0] = 200;
+
+		for (int a = 1; a < 1000; a++)
+		{		
+			xHorizon[a] = a;
+
+			if (Math.random() < 0.5)
+				yHorizon[a] = yHorizon[a - 1] + 1;
+			else
+				yHorizon[a] = yHorizon[a - 1] - 1;
+		}
+
+		xHorizon [1000] = 1000;
+		yHorizon[1000] = 500;
+		xHorizon [1001] = 0;
+		yHorizon[1001] = 500;
+
+
+
+
+
+		
+			//Pre-Set-up: Tree
+		int counter = 0;		
+
+		xpoints2[0] = 600;
+		ypoints2[0] = 300;
+		int totalIterations = 0;		
+		boolean out = false;
+		
+		for (int b = 1; out == false; b++)
+		{		
+			ypoints2[b] = ypoints2[b - 1] - 2;
+
+			if (Math.random() < 0.4)
+			{	
+				if (counter < 4)
+				{
+					xpoints2[b] = (xpoints2[b - 1] - 1); 
+					counter++;
+				}
+				else
+				{
+					xpoints2[b] = (xpoints2[b - 1] + 1);
+					counter = 0;
+				}	
+			}
+			else
+			{
+				xpoints2[b] = (xpoints2[b - 1] + 1);
+			}
+
+			if (xpoints2[b] >= 650)
+			{
+				out = true; 
+				totalIterations = b;	
+			} 	
+		}
+		
+		finalIterations = totalIterations;			
+
+		for (int c = 0; c < totalIterations; c++, finalIterations++)
+		{
+			xpoints2[totalIterations + c] = 650 + (650 - (xpoints2[totalIterations - c]));
+			ypoints2[(totalIterations * 2 - 1) - c] = (ypoints2[c]) ;	
+		}
+
+
+
+
+			//snow Initializing
+		for (int a = 0; a < 40; a++)
+		{
+			do
+			{
+				snowXPositions[a] = (int)Math.round(1000 * Math.random());
+			}
+			while (snowXPositions[a] < 100 || snowXPositions[a] > 900);
+
+			snowYPositions[a] = (int)Math.round(500 * Math.random());	
+		}
+
+		
+	}
+
+
+
+
+	public void run()
+	{
+		while(true)
+  		{
+			
+			
+			repaint();
+       		 	try {runner.sleep(100);}
+        		catch (InterruptedException e) { }
+   		}
+	}
+
+	public void paint(Graphics gr)
+	{
+		Color myColor = new Color(51, 153, 204);
+		setBackground(myColor);
+
+		myColor = new Color(176,196,222);
+		gr.setColor(myColor);
+
+		gr.fillPolygon(xHorizon , yHorizon, 1002);
+		
+
+		myColor = new Color(0,75,0);
+		gr.setColor(myColor);
+		gr.fillPolygon(xpoints2, ypoints2, finalIterations);
+		
+
+			myColor = new Color(40, 20, 0);
+			gr.setColor(myColor);
+			gr.fillRect(630, 300, 40,80); 
+
+
+
+
+			gr.setColor(Color.black);
+		for (int diameter = 201; diameter <=205; diameter++)
+		{
+			gr.fillOval(-100,-100, diameter, diameter);
+			gr.fillOval(-100, 400, diameter, diameter);
+			
+
+			gr.fillOval(-50, 325, diameter - 100, diameter - 100);
+			gr.fillOval(-50, 75, diameter - 100, diameter - 100);
+			gr.fillOval(-50, 200, diameter - 100, diameter - 100);
+			gr.fillOval(-50, 137, diameter - 100, diameter - 100);
+			gr.fillOval(-50, 262, diameter - 100, diameter- 100);
+	
+			
+		}
+			
+		for (int diameter = 201, position = 899; diameter <=205; position--, diameter++)
+		{
+			gr.fillOval(position,-100, diameter, diameter);
+			gr.fillOval(position, 400, diameter, diameter);
+			
+			gr.fillOval(position + (diameter - 101) / 2, 325, diameter - 101, diameter - 101);
+			gr.fillOval(position + (diameter - 101) / 2, 75, diameter - 101, diameter - 101);
+			gr.fillOval(position + (diameter - 101) / 2, 200, diameter - 101, diameter - 101);
+			gr.fillOval(position + (diameter - 101) / 2, 137, diameter - 101, diameter - 101);
+			gr.fillOval(position + (diameter - 101) / 2, 262, diameter - 101, diameter - 101);
+		}
+
+		gr.setColor(Color.white);
+
+
+		gr.fillOval(-100,-100, 200, 200);
+		gr.fillOval(-100, 400, 200, 200);
+		gr.fillOval( 900,-100, 200, 200);
+		gr.fillOval( 900, 400, 200, 200);
+
+		gr.fillOval(-50, 325, 100, 100);
+		gr.fillOval(-50, 75, 100, 100);
+		gr.fillOval(-50, 200, 100, 100);
+		gr.fillOval(-50, 137, 100, 100);
+		gr.fillOval(-50, 262, 100, 100);
+	
+		gr.fillOval(950, 325, 100, 100);
+		gr.fillOval(950, 75, 100, 100);
+		gr.fillOval(950, 200, 100, 100);
+		gr.fillOval(950, 137, 100, 100);
+		gr.fillOval(950, 262, 100, 100);
+		
+
+
+
+			//SnowMan!!!!!
+		gr.fillOval(250, 300, 126, 126);
+		gr.fillOval(263, 230, 100, 100);
+		gr.fillOval(272, 165, 82, 82);
+		
+			//Buttons
+		gr.setColor(Color.black);
+		gr.fillOval(309, 280, 8, 8);
+		gr.fillOval(309, 270, 8, 8);
+		gr.fillOval(309, 260, 8, 8);
+
+			//Eyes
+		gr.fillOval(297, 190, 8, 8);
+		gr.fillOval(322, 190, 8, 8);
+
+			//Scarf
+		gr.setColor(Color.red);
+		gr.fillRect(286, 236, 60, 5);
+		gr.fillOval(286 + 50, 233, 10, 10);
+
+		int xpoints3[] = {286 + 55, 286 + 55, 355};
+   		int ypoints3[] = {233, 280, 275};
+		gr.fillPolygon(xpoints3, ypoints3, 3); 
+
+			//arms
+		myColor = new Color(102, 51, 0);
+		gr.setColor(myColor);
+		int armOneXPositions[] = {261, 228 , 232, 265};
+		int armOneYPositions[] = {277, 277 , 270, 270};
+		gr.fillPolygon(armOneXPositions, armOneYPositions, 4);
+
+
+		if (armPosition == 0 || armPosition == 8)
+		{
+			int armTwoXPositions[] = {388, 363 , 362, 384};
+			int armTwoYPositions[] = {247, 277 , 270, 240};
+			gr.fillPolygon(armTwoXPositions, armTwoYPositions, 4);	
+
+			if (armPosition == 8)
+				armPosition = -1;
+		}
+		if (armPosition == 1 || armPosition == 7)
+		{
+			int armTwoXPositions[] = {393, 363 , 362, 389};
+			int armTwoYPositions[] = {252, 277 , 270, 245};
+			gr.fillPolygon(armTwoXPositions, armTwoYPositions, 4);	
+		}
+		if (armPosition == 2 || armPosition == 6)
+		{
+			int armTwoXPositions[] = {398, 363 , 362, 394};
+			int armTwoYPositions[] = {257, 277 , 270, 250};
+			gr.fillPolygon(armTwoXPositions, armTwoYPositions, 4);	
+		}
+		if (armPosition == 3 || armPosition == 5)
+		{
+			int armTwoXPositions[] = {403, 363 , 362, 399};
+			int armTwoYPositions[] = {262, 277 , 270, 255};
+			gr.fillPolygon(armTwoXPositions, armTwoYPositions, 4);	
+		}
+		if (armPosition == 4)
+		{
+			int armTwoXPositions[] = {408, 363 , 362, 404};
+			int armTwoYPositions[] = {267, 277 , 270, 260};
+			gr.fillPolygon(armTwoXPositions, armTwoYPositions, 4);	
+		}
+		armPosition++;
+
+		gr.setColor(Color.orange);
+		int noseXPositions[] = {310, 370, 310};
+		int noseYPositions[] = {213, 230, 205};
+		gr.fillPolygon(noseXPositions, noseYPositions, 3);
+
+		
+		gr.setColor(Color.white);
+		for (int a = 0; a < 40; a++)
+		{
+			if (snowYPositions[a] == 500)
+			{
+				snowYPositions[a] = 0;
+				
+				do
+				{
+					snowXPositions[a] = (int)Math.round(1000 * Math.random());
+				}
+				while (snowXPositions[a] < 100 || snowXPositions[a] > 900);
+			}
+			else
+				snowYPositions[a] += 1;	
+		}
+
+		for (int a = 0; a < 40; a++)
+		{
+			gr.fillOval(snowXPositions[a], snowYPositions[a], 5, 5);
+		}
+		
+		
+	}
+}
